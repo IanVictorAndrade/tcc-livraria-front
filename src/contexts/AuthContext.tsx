@@ -1,8 +1,9 @@
 "use client";
-import { createContext, ReactNode, useContext, useState } from 'react';
+import {createContext, ReactNode, useContext, useEffect, useState} from 'react';
 import { useRouter } from 'next/navigation';
 import api from "@/services/api";
 import {toast} from "sonner";
+import { jwtDecode } from "jwt-decode";
 
 interface AuthContextData {
     token: string | null;
@@ -19,6 +20,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const isAuthenticated = !!token;
 
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            const decodedToken = jwtDecode(token);
+            let currentDate = new Date();
+            if (decodedToken.exp! * 1000 < currentDate.getTime()) {
+                setToken(null);
+                localStorage.removeItem('token');
+            } else {
+                setToken(token);
+            }
+        }
+    }, []);
+
     const login = async (email: string, senha: string) => {
         try {
             const response = await api.post('/usuario/login', {
@@ -33,9 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             if (response.status !== 200) {
                 toast.error("Erro ao tentar logar")
             }
-                toast.success("Bem Vindo")
                 const token = response.data.token;
-                console.log('Token recebido:', token);
                 setToken(token);
 
                 // Armazena o token em localStorage ou cookies se necessário
