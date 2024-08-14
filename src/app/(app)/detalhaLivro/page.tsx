@@ -18,26 +18,22 @@ export default function DetalhaLivro() {
             headers: {Authorization: `${token}`}
         });
         setLivros(response.data);
-        console.log(response.data);
     }
-
-    // const fetchLinkPagamento = async () => {
-    //     const response = await api.post('/mercado-pago/link-pagamento',
-    //     bodyForLivro,
-    //             {
-    //         headers: { Authorization: `${token}` }
-    //     })
-    // }
-
     async function comprarLivro(livro: LivroProps) {
-        console.log('Comprar livro', livro);
         const payload = {
             id: livro.id,
             title: livro.titulo,
-            description: `Descrição do livro ${livro.titulo}`,
-            teste: "ian"
+            description: `${livro.descricao}`,
+            category_id: "entertainment",
+            quantity: 1,
+            currencyId: "BRL",
+            unitPrice: 42.99,
         }
-        console.log(payload);
+        const response = await api.post('/mercado-pago/link-pagamento', payload, {
+            headers: { Authorization: `${token}` }
+        });
+
+        window.open(response.data)
     }
 
     return (
@@ -49,7 +45,7 @@ export default function DetalhaLivro() {
                     <p>{livro.autor}</p>
                     <p>{livro.preco}</p>
                     <p>{livro.ano}</p>
-                    <p>TESTE DE DESCRIÇÃO</p>
+                    <p>{livro.descricao}</p>
                     <button className="flex mt-20 text-2xl" onClick={() => comprarLivro(livro)}>Comprar</button>
                 </div>
             ))}
