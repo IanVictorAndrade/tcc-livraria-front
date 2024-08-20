@@ -55,9 +55,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 localStorage.setItem('token', token);
 
                 // Redireciona para a página principal ou outra página após o login
-                router.push('/detalhaLivro');
+                router.push('/home');
         } catch (error) {
-            console.error('Login error:', error);
+            toast.error('Credenciais inválidas');
         }
     };
 
