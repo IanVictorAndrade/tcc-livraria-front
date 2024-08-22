@@ -5,4 +5,5 @@ export interface LivroProps {
     descricao: string;
     ano: number;
     preco: number;
+    imagemUrl: string;
 }
