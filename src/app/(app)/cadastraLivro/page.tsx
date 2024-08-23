@@ -14,7 +14,7 @@ export default function CadastraLivro() {
         descricao: '',
         ano: new Date().getFullYear(),
         preco: 0,
-        imagemUrl: '',
+        imagemUrl: null,
     });
 
     const [imagem, setImagem] = useState<File | null>(null);
@@ -44,15 +44,12 @@ export default function CadastraLivro() {
         e.preventDefault();
         try {
             // Cadastrar o livro
-            const response = await api.post('/livro/cadastrar',{
-                livro,
-            }, {
+            const response = await api.post('/livro/cadastrar', livro, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            const livroId = response.data;
-            console.log(livroId);
+            const livroId = response.data.id;
 
             // Fazer upload da imagem
             if (imagem && livroId) {
@@ -70,7 +67,7 @@ export default function CadastraLivro() {
             if (arquivoPDF && livroId) {
                 const formDataPDF = new FormData();
                 formDataPDF.append('file', arquivoPDF);
-                await api.post(`/google-drive/upload/${livroId}`, {formDataPDF}, {
+                await api.post(`/google-drive/upload/${livroId}`, formDataPDF, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                         Authorization: `Bearer ${token}`,

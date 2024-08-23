@@ -42,6 +42,7 @@ export default function Home() {
                                 height={300}
                                 className="rounded object-cover"
                                 unoptimized={true}
+                                priority={true}
                             />
                         )}
                         <div className="mt-4 text-center">
