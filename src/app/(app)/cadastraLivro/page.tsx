@@ -84,9 +84,12 @@ export default function CadastraLivro() {
 
     return (
         <div className="max-w-xl mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Cadastro de Livro</h1>
+            <div className="flex justify-around">
+                <a href="/home">Voltar</a>
+                <h1 className="text-2xl font-bold mb-4">Cadastro de Livro</h1>
+            </div>
             <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
+            <div>
                     <label htmlFor="titulo" className="block text-sm font-medium text-white">
                         Título
                     </label>

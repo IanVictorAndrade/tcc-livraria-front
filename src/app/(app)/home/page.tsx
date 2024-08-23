@@ -5,6 +5,7 @@ import {useAuth} from "@/contexts/AuthContext";
 import api from "@/services/api";
 import Image from "next/image";
 import {toast} from "sonner";
+import Navbar from "@/components/Navbar";
 
 export default function Home() {
     const [livros, setLivros] = useState<Array<LivroProps>>([]);
@@ -29,26 +30,26 @@ export default function Home() {
 
     return (
         <div>
-            <h1 className="bold text-2xl text-center">Home</h1>
-            <p className="text-center">Bem-vindo a nossa livraria</p>
+            <Navbar />
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {livros.map((livro) => (
-                    <div key={livro.id} className="bg-white shadow-md p-4 rounded-lg flex flex-col items-center">
+                    <div key={livro.id} className="shadow-md rounded-lg flex flex-col items-center">
                         {livro.imagemUrl && (
                             <Image
                                 src={`${process.env.NEXT_PUBLIC_URL_BACK}/${livro.imagemUrl}`}
                                 alt={livro.titulo}
                                 width={200}
                                 height={300}
-                                className="rounded object-cover"
+                                className={`rounded-lg shadow-lg transform hover:scale-105 
+                                transition-transform duration-300 ease-in-out object-cover`}
                                 unoptimized={true}
                                 priority={true}
                             />
                         )}
                         <div className="mt-4 text-center">
-                            <h2 className="text-lg text-black font-semibold">{livro.titulo}</h2>
-                            <p className="text-gray-600">Autor: {livro.autor}</p>
-                            <p className="text-gray-600">Ano: {livro.ano}</p>
+                            <h2 className="text-lg text-white font-bold">{livro.titulo}</h2>
+                            <p className="text-white font-bold">Autor: {livro.autor}</p>
+                            <p className="text-white font-bold">Ano: {livro.ano}</p>
                         </div>
                     </div>
                 ))}
