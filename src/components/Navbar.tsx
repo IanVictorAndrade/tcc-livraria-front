@@ -8,7 +8,10 @@ export default function Navbar() {
                     <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
                         <div className="hidden sm:block sm:ml-6">
                             <div className="flex space-x-4">
-                                <a href="/gerenciaLivro" className="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">
+                                <a href="/home" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                                    Home
+                                </a>
+                                <a href="/gerenciaLivro" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                                     Gerencia Livro
                                 </a>
                                 <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">

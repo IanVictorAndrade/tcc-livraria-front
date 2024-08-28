@@ -31,7 +31,7 @@ export default function Home() {
     return (
         <div>
             <Navbar />
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mt-12">
                 {livros.map((livro) => (
                     <div key={livro.id} className="shadow-md rounded-lg flex flex-col items-center">
                         {livro.imagemUrl && (
