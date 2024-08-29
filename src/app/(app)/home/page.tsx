@@ -33,7 +33,7 @@ export default function Home() {
             <Navbar />
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mt-12">
                 {livros.map((livro) => (
-                    <div key={livro.id} className="shadow-md rounded-lg flex flex-col items-center">
+                    <div key={livro.id} className="rounded-lg flex flex-col items-center">
                         {livro.imagemUrl && (
                             <Image
                                 src={`${process.env.NEXT_PUBLIC_URL_BACK}/${livro.imagemUrl}`}
