@@ -140,6 +140,7 @@ export default function GerenciaLivro() {
                                             name="titulo"
                                             value={livro.titulo}
                                             onChange={handleChange}
+                                            required={true}
                                             className="mt-1 block text-black w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                         />
                                     </div>
@@ -153,6 +154,7 @@ export default function GerenciaLivro() {
                                             name="autor"
                                             value={livro.autor}
                                             onChange={handleChange}
+                                            required={true}
                                             className="mt-1 block text-black w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                         />
                                     </div>
@@ -165,6 +167,7 @@ export default function GerenciaLivro() {
                                             name="descricao"
                                             value={livro.descricao}
                                             onChange={handleChange}
+                                            required={true}
                                             className="mt-1 block w-full text-black px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                         />
                                     </div>
@@ -178,7 +181,21 @@ export default function GerenciaLivro() {
                                             name="ano"
                                             value={livro.ano}
                                             onChange={handleChange}
+                                            required
+                                            onInput={(e) => {
+                                                const input = e.target as HTMLInputElement;
+                                                const currentYear = new Date().getFullYear();
+                                                if (input.value.length > 4) {
+                                                    input.value = input.value.slice(0, 4);
+                                                }
+                                                if (parseInt(input.value, 10) > currentYear) {
+                                                    input.value = currentYear.toString();
+                                                }
+                                            }}
                                             className="mt-1 block w-full px-3 py-2 text-black border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                            maxLength={4}
+                                            min="1000"
+                                            max={new Date().getFullYear()}
                                         />
                                     </div>
                                     <div>
@@ -191,6 +208,7 @@ export default function GerenciaLivro() {
                                             name="preco"
                                             value={livro.preco}
                                             onChange={handleChange}
+                                            required={true}
                                             className="mt-1 block w-full text-black px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                         />
                                     </div>
@@ -203,6 +221,7 @@ export default function GerenciaLivro() {
                                             id="imagem"
                                             name="imagem"
                                             onChange={handleImageChange}
+                                            required={true}
                                             className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
                                         />
                                     </div>
@@ -215,6 +234,7 @@ export default function GerenciaLivro() {
                                             id="arquivoPDF"
                                             name="arquivoPDF"
                                             onChange={handlePDFChange}
+                                            required={true}
                                             className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
                                         />
                                     </div>
@@ -229,6 +249,10 @@ export default function GerenciaLivro() {
                                 </div>
                             </form>
                         </div>
+
+                        {/* Linha Divisória */}
+                        <div className="hidden md:block border-l border-gray-300"></div>
+
                         {/* Seção de Livros Cadastrados */}
                         <div className="md:w-1/2">
                             <h3 className="text-lg font-medium text-gray-700 mb-4">Livros Cadastrados</h3>
@@ -262,5 +286,4 @@ export default function GerenciaLivro() {
             </div>
         </>
     );
-
 }
