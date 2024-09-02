@@ -20,7 +20,8 @@ export default function GerenciaLivro() {
     const [livros, setLivros] = useState<Array<LivroProps>>([]);
     const [imagem, setImagem] = useState<File | null>(null);
     const [arquivoPDF, setArquivoPDF] = useState<File | null>(null);
-
+    const [isEditMode, setIsEditMode] = useState<boolean>(false);
+    const [editingLivroId, setEditingLivroId] = useState<number | null>(null);
 
     useEffect(() => {
         listaLivros();
@@ -38,7 +39,6 @@ export default function GerenciaLivro() {
             toast.error('Necessário fazer o login para acessar a página');
         }
     }
-
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const {name, value} = e.target;
@@ -60,6 +60,19 @@ export default function GerenciaLivro() {
         }
     };
 
+    const handleEdit = (livro: LivroProps) => {
+        setLivro({
+            titulo: livro.titulo,
+            autor: livro.autor,
+            descricao: livro.descricao,
+            ano: livro.ano,
+            preco: livro.preco,
+            imagemUrl: livro.imagemUrl,
+        });
+        setIsEditMode(true);
+        setEditingLivroId(livro.id);
+    };
+
     const handleDelete = async (livroId: number) => {
         try {
             await api.delete(`/livro/deletar/${livroId}`, {
@@ -75,48 +88,88 @@ export default function GerenciaLivro() {
         }
     };
 
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            // Cadastrar o livro
-            const response = await api.post('/livro/cadastrar', livro, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+            if (isEditMode && editingLivroId) {
+                // Editar o livro
+                await api.put(`/livro/editar/${editingLivroId}`, livro, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                toast.success('Livro atualizado com sucesso!');
+            } else {
+                // Cadastrar um novo livro
+                const response = await api.post('/livro/cadastrar', livro, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                const livroId = response.data.id;
+
+                // Fazer upload da imagem
+                if (imagem && livroId) {
+                    const formDataImagem = new FormData();
+                    formDataImagem.append('imagem', imagem);
+                    await api.post(`/livro/enviarImagem/${livroId}`, formDataImagem, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+                }
+
+                // Fazer upload do arquivo PDF
+                if (arquivoPDF && livroId) {
+                    const formDataPDF = new FormData();
+                    formDataPDF.append('file', arquivoPDF);
+                    await api.post(`/google-drive/upload/${livroId}`, formDataPDF, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+                }
+
+                toast.success('Livro cadastrado com sucesso!');
+            }
+
+            // Resetar formulário e estado de edição
+            setLivro({
+                titulo: '',
+                autor: '',
+                descricao: '',
+                ano: new Date().getFullYear(),
+                preco: 0,
+                imagemUrl: null,
             });
-            const livroId = response.data.id;
-
-            // Fazer upload da imagem
-            if (imagem && livroId) {
-                const formDataImagem = new FormData();
-                formDataImagem.append('imagem', imagem);
-                await api.post(`/livro/enviarImagem/${livroId}`, formDataImagem, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-            }
-
-            // Fazer upload do arquivo PDF
-            if (arquivoPDF && livroId) {
-                const formDataPDF = new FormData();
-                formDataPDF.append('file', arquivoPDF);
-                await api.post(`/google-drive/upload/${livroId}`, formDataPDF, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-            }
-
-            toast.success('Livro cadastrado com sucesso!');
+            setImagem(null);
+            setArquivoPDF(null);
+            setIsEditMode(false);
+            setEditingLivroId(null);
+            listaLivros();
         } catch (error) {
-            toast.error('Erro ao cadastrar livro:');
-            console.log('Erro ao cadastrar livro', error);
+            toast.error('Erro ao cadastrar ou editar livro:');
+            console.log('Erro ao cadastrar ou editar livro', error);
         }
     };
+
+    const handleCancelEdit = () => {
+        setLivro({
+            titulo: '',
+            autor: '',
+            descricao: '',
+            ano: new Date().getFullYear(),
+            preco: 0,
+            imagemUrl: null,
+        });
+        setImagem(null);
+        setArquivoPDF(null);
+        setIsEditMode(false);
+        setEditingLivroId(null);
+    };
+
 
     return (
         <>
@@ -209,42 +262,55 @@ export default function GerenciaLivro() {
                                             value={livro.preco}
                                             onChange={handleChange}
                                             required={true}
-                                            className="mt-1 block w-full text-black px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                            className="mt-1 block text-black w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                            min="0"
+                                            step="0.01"
                                         />
                                     </div>
-                                    <div>
+                                    {!isEditMode && <>
+                                        <div>
                                         <label htmlFor="imagem" className="block text-sm font-medium text-gray-700">
-                                            Imagem do Livro
+                                            Imagem
                                         </label>
                                         <input
                                             type="file"
                                             id="imagem"
-                                            name="imagem"
+                                            accept="image/*"
                                             onChange={handleImageChange}
-                                            required={true}
-                                            className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                                            className="mt-1 block text-black w-full px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                         />
                                     </div>
                                     <div>
                                         <label htmlFor="arquivoPDF" className="block text-sm font-medium text-gray-700">
-                                            Arquivo PDF
+                                        Arquivo PDF
                                         </label>
                                         <input
-                                            type="file"
-                                            id="arquivoPDF"
-                                            name="arquivoPDF"
-                                            onChange={handlePDFChange}
-                                            required={true}
-                                            className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                                        type="file"
+                                        id="arquivoPDF"
+                                        accept="application/pdf"
+                                        onChange={handlePDFChange}
+                                        className="mt-1 block w-full text-black px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                         />
                                     </div>
+                                    </>}
                                 </div>
-                                <div>
+                                <div className="flex justify-end space-x-4">
+                                    {isEditMode && (
+                                        <button
+                                            type="button"
+                                            onClick={handleCancelEdit}
+                                            className="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75"
+                                        >
+                                            Cancelar Edição
+                                        </button>
+                                    )}
                                     <button
                                         type="submit"
-                                        className="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-indigo-700"
+                                        className={`${
+                                            isEditMode ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-amber-500 hover:bg-amber-600'
+                                        } text-white font-semibold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-75`}
                                     >
-                                        Cadastrar Livro
+                                        {isEditMode ? 'Editar Livro' : 'Cadastrar Livro'}
                                     </button>
                                 </div>
                             </form>
@@ -253,26 +319,29 @@ export default function GerenciaLivro() {
                         {/* Linha Divisória */}
                         <div className="hidden md:block border-l border-gray-300"></div>
 
-                        {/* Seção de Livros Cadastrados */}
+                        {/* Seção de Listagem de Livros */}
                         <div className="md:w-1/2">
                             <h3 className="text-lg font-medium text-gray-700 mb-4">Livros Cadastrados</h3>
                             <ul className="space-y-4">
                                 {livros.map((livro) => (
-                                    <li key={livro.id} className="flex justify-between items-center p-4 border rounded-lg shadow-sm">
+                                    <li
+                                        key={livro.id}
+                                        className="flex justify-between items-center bg-gray-100 p-4 rounded-lg shadow"
+                                    >
                                         <div>
-                                            <h4 className="font-semibold text-gray-800">{livro.titulo}</h4>
-                                            <p className="text-gray-600">{livro.autor}</p>
+                                            <p className="text-sm font-medium text-gray-700">{livro.titulo}</p>
+                                            <p className="text-xs text-gray-500">Autor: {livro.autor}</p>
                                         </div>
-                                        <div className="flex space-x-4">
+                                        <div className="flex space-x-2">
                                             <button
-                                                onClick={() => alert('Função de editar em desenvolvimento!')}
-                                                className="text-indigo-600 hover:text-indigo-900"
+                                                onClick={() => handleEdit(livro)}
+                                                className="text-yellow-500 hover:text-yellow-700 font-semibold focus:outline-none focus:underline"
                                             >
                                                 Editar
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(livro.id)}
-                                                className="text-red-600 hover:text-red-900"
+                                                className="text-red-500 hover:text-red-700 font-semibold focus:outline-none focus:underline"
                                             >
                                                 Excluir
                                             </button>
