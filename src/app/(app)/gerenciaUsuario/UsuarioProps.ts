@@ -4,4 +4,11 @@ export interface UsuarioProps {
     email: string;
     senha: string;
     cpf: string;
+    role: [
+        {
+            id: number;
+            nome: string;
+        }
+    ]
+
 }

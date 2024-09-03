@@ -15,6 +15,7 @@ export default function GerenciaUsuario() {
         email: '',
         senha: '',
         cpf: '',
+        role: [{ id: 1, nome: "Administrador" }],
     });
     const [isEditMode, setIsEditMode] = useState<boolean>(false);
     const [editingUserId, setEditingUserId] = useState<number | null>(null);
@@ -50,12 +51,24 @@ export default function GerenciaUsuario() {
         }
     }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const {name, value} = e.target;
-        setUsuario({
-            ...usuario,
-            [name]: value,
-        });
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+
+        if (name === "role") {
+            const selectedRole: [{ id: number; nome: string }] = value === "ROLE_ADMIN"
+                ? [{ id: 1, nome: "ROLE_ADMIN" }]
+                : [{ id: 2, nome: "ROLE_USER" }];
+
+            setUsuario({
+                ...usuario,
+                role: selectedRole,
+            });
+        } else {
+            setUsuario({
+                ...usuario,
+                [name]: value,
+            });
+        }
     };
 
     const handleEdit = (user: UsuarioProps) => {
@@ -64,6 +77,7 @@ export default function GerenciaUsuario() {
             cpf: user.cpf,
             email: user.email,
             senha: user.senha,
+            role: user.role[0].nome === "ROLE_ADMIN" ? [{ id: 1, nome: "ROLE_ADMIN" }] : [{ id: 2, nome: "ROLE_USER" }],
         });
         setIsEditMode(true);
         setEditingUserId(user.id);
@@ -112,6 +126,7 @@ export default function GerenciaUsuario() {
                 email: '',
                 cpf: '',
                 senha: '',
+                role: [{ id: 1, nome: "Administrador" }],
             });
             setIsEditMode(false);
             setEditingUserId(null);
@@ -128,6 +143,7 @@ export default function GerenciaUsuario() {
             email: '',
             cpf: '',
             senha: '',
+            role: [{ id: 1, nome: "Administrador" }],
         });
         setIsEditMode(false);
         setEditingUserId(null);
@@ -189,10 +205,12 @@ export default function GerenciaUsuario() {
                                             <label htmlFor="senha"
                                                    className="block text-sm font-medium text-gray-700">Senha</label>
                                             <button
+                                                type={"button"}
                                                 className="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-75"
-                                                onClick={() =>
+                                                onClick={(e) => {
+                                                    e.preventDefault();
                                                     resetarSenhaUsuario(usuario.email)
-                                                }>
+                                                }}>
                                                 Resetar a senha desse usuário
                                             </button>
                                         </>
@@ -215,12 +233,14 @@ export default function GerenciaUsuario() {
                                         </label>
                                         <select
                                             id="role"
-                                            value={usuario.senha}
+                                            name="role"
+                                            value={usuario.role[0].nome}
+                                            onChange={handleChange}
                                             required={true}
                                             className="mt-1 block w-full text-black bg-white px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                         >
-                                            <option value="Administrador">Administrador</option>
-                                            <option value="Usuário">Usuário</option>
+                                            <option value="ROLE_ADMIN">Administrador</option>
+                                            <option value="ROLE_USER">Usuário</option>
                                         </select>
                                     </div>
                                 </div>
