@@ -1,6 +1,5 @@
 "use client";
-import {useEffect, useState} from "react";
-import {LivroProps} from './LivroProps';
+import {LivroProps} from '@/@types/utils/LivroProps';
 import api from "@/services/api";
 import {useAuth} from "@/contexts/AuthContext";
 

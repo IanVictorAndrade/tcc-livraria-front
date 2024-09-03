@@ -12,7 +12,10 @@ export default function Navbar() {
                                     Home
                                 </a>
                                 <a href="/gerenciaLivro" className="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                                    Gerencia Livro
+                                    Gerenciar Livro
+                                </a>
+                                <a href="/gerenciaUsuario" className="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                                    Gerenciar Usuário
                                 </a>
                                 <a href="#" className="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                                     Equipe

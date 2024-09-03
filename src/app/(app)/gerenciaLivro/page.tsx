@@ -1,7 +1,7 @@
 "use client";
 import React, {useEffect, useState} from 'react';
 import api from "@/services/api";
-import {LivroProps} from "@/app/(app)/detalhaLivro/LivroProps";
+import {LivroProps} from "@/@types/utils/LivroProps";
 import {toast} from "sonner";
 import {useAuth} from "@/contexts/AuthContext";
 import Navbar from "@/components/Navbar";
