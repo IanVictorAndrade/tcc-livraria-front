@@ -51,24 +51,25 @@ export default function GerenciaUsuario() {
         }
     }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const {name, value} = e.target;
+        setUsuario({
+            ...usuario,
+            [name]: value,
+        });
+    };
 
-        if (name === "role") {
-            const selectedRole: [{ id: number; nome: string }] = value === "ROLE_ADMIN"
-                ? [{ id: 1, nome: "ROLE_ADMIN" }]
-                : [{ id: 2, nome: "ROLE_USER" }];
+    const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { value } = e.target;
 
-            setUsuario({
-                ...usuario,
-                role: selectedRole,
-            });
-        } else {
-            setUsuario({
-                ...usuario,
-                [name]: value,
-            });
-        }
+        const selectedRole: [{ id: number; nome: string }] = value === "ROLE_ADMIN"
+            ? [{ id: 1, nome: "ROLE_ADMIN" }]
+            : [{ id: 2, nome: "ROLE_USER" }];
+
+        setUsuario({
+            ...usuario,
+            role: selectedRole,
+        });
     };
 
     const handleEdit = (user: UsuarioProps) => {
@@ -169,8 +170,9 @@ export default function GerenciaUsuario() {
                                         <input
                                             type="text"
                                             id="nome"
+                                            name="nome"
                                             value={usuario.nome}
-                                            onChange={handleChange}
+                                            onChange={handleInputChange}
                                             required={true}
                                             className="mt-1 block text-black w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                         />
@@ -182,8 +184,9 @@ export default function GerenciaUsuario() {
                                         <input
                                             type="text"
                                             id="email"
+                                            name="email"
                                             value={usuario.email}
-                                            onChange={handleChange}
+                                            onChange={handleInputChange}
                                             required={true}
                                             className="mt-1 block text-black w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                         />
@@ -194,8 +197,9 @@ export default function GerenciaUsuario() {
                                         </label>
                                         <input
                                             id="cpf"
+                                            name="cpf"
                                             value={usuario.cpf}
-                                            onChange={handleChange}
+                                            onChange={handleInputChange}
                                             required={true}
                                             className="mt-1 block w-full text-black px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                         />
@@ -221,8 +225,9 @@ export default function GerenciaUsuario() {
                                             </label>
                                             <input
                                                 id="senha"
+                                                name="senha"
                                                 value={usuario.senha}
-                                                onChange={handleChange}
+                                                onChange={handleInputChange}
                                                 required={true}
                                                 className="mt-1 block w-full text-black px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                         />
@@ -235,7 +240,7 @@ export default function GerenciaUsuario() {
                                             id="role"
                                             name="role"
                                             value={usuario.role[0].nome}
-                                            onChange={handleChange}
+                                            onChange={handleRoleChange}
                                             required={true}
                                             className="mt-1 block w-full text-black bg-white px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                         >
