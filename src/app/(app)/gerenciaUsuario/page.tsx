@@ -4,7 +4,7 @@ import api from "@/services/api";
 import {toast} from "sonner";
 import {useAuth} from "@/contexts/AuthContext";
 import Navbar from "@/components/Navbar";
-import { UsuarioProps } from "./UsuarioProps";
+import {UsuarioProps, UsuarioPropsCadastro} from "./UsuarioProps";
 
 
 export default function GerenciaUsuario() {
@@ -16,6 +16,13 @@ export default function GerenciaUsuario() {
         senha: '',
         cpf: '',
         role: [{ id: 1, nome: "Administrador" }],
+    });
+    const [usuarioCadastro, setUsuarioCadastro] = useState<Omit<UsuarioPropsCadastro, 'id'>>({
+        nome: '',
+        email: '',
+        senha: '',
+        cpf: '',
+        role: '',
     });
     const [isEditMode, setIsEditMode] = useState<boolean>(false);
     const [editingUserId, setEditingUserId] = useState<number | null>(null);
@@ -57,6 +64,10 @@ export default function GerenciaUsuario() {
             ...usuario,
             [name]: value,
         });
+        setUsuarioCadastro({
+            ...usuarioCadastro,
+            [name]: value,
+        });
     };
 
     const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -69,6 +80,10 @@ export default function GerenciaUsuario() {
         setUsuario({
             ...usuario,
             role: selectedRole,
+        });
+        setUsuarioCadastro({
+           ...usuarioCadastro,
+           role: value
         });
     };
 
@@ -112,7 +127,7 @@ export default function GerenciaUsuario() {
                 toast.success('Usuário atualizado com sucesso!');
             } else {
                 // Cadastrar um novo Usuário
-                await api.post('/usuario/cadastrar', usuario, {
+                await api.post('/usuario/cadastrar', usuarioCadastro, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
