@@ -4,7 +4,7 @@ import api from "@/services/api";
 import {toast} from "sonner";
 import {useAuth} from "@/contexts/AuthContext";
 import Navbar from "@/components/Navbar";
-import {UsuarioProps, UsuarioPropsCadastro} from "./UsuarioProps";
+import {UsuarioProps, UsuarioPropsCadastro} from "../../../@types/utils/UsuarioProps";
 
 
 export default function GerenciaUsuario() {
@@ -60,10 +60,7 @@ export default function GerenciaUsuario() {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const {name, value} = e.target;
-        setUsuario({
-            ...usuario,
-            [name]: value,
-        });
+
         setUsuarioCadastro({
             ...usuarioCadastro,
             [name]: value,
@@ -73,14 +70,6 @@ export default function GerenciaUsuario() {
     const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const { value } = e.target;
 
-        const selectedRole: [{ id: number; nome: string }] = value === "ROLE_ADMIN"
-            ? [{ id: 1, nome: "ROLE_ADMIN" }]
-            : [{ id: 2, nome: "ROLE_USER" }];
-
-        setUsuario({
-            ...usuario,
-            role: selectedRole,
-        });
         setUsuarioCadastro({
            ...usuarioCadastro,
            role: value
@@ -88,12 +77,12 @@ export default function GerenciaUsuario() {
     };
 
     const handleEdit = (user: UsuarioProps) => {
-        setUsuario({
+        setUsuarioCadastro({
             nome: user.nome,
             cpf: user.cpf,
             email: user.email,
             senha: user.senha,
-            role: user.role[0].nome === "ROLE_ADMIN" ? [{ id: 1, nome: "ROLE_ADMIN" }] : [{ id: 2, nome: "ROLE_USER" }],
+            role: user.role[0].nome,
         });
         setIsEditMode(true);
         setEditingUserId(user.id);
@@ -119,7 +108,7 @@ export default function GerenciaUsuario() {
         try {
             if (isEditMode && editingUserId) {
                 // Editar o Usuário
-                await api.put(`/usuario/editar/${editingUserId}`, usuario, {
+                await api.put(`/usuario/editar/${editingUserId}`, usuarioCadastro, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -137,29 +126,29 @@ export default function GerenciaUsuario() {
             }
 
             // Resetar formulário e estado de edição
-            setUsuario({
+            setUsuarioCadastro({
                 nome: '',
                 email: '',
                 cpf: '',
                 senha: '',
-                role: [{ id: 1, nome: "Administrador" }],
+                role: 'ROLE_ADMIN',
             });
             setIsEditMode(false);
             setEditingUserId(null);
             listaUsuarios();
         } catch (error) {
-            toast.error('Erro ao cadastrar ou editar Usuário:');
+            toast.error('Erro ao salvar o Usuário');
             console.log('Erro ao cadastrar ou editar Usuário', error);
         }
     };
 
     const handleCancelEdit = () => {
-        setUsuario({
+        setUsuarioCadastro({
             nome: '',
             email: '',
             cpf: '',
             senha: '',
-            role: [{ id: 1, nome: "Administrador" }],
+            role: 'ROLE_ADMIN',
         });
         setIsEditMode(false);
         setEditingUserId(null);
@@ -186,7 +175,7 @@ export default function GerenciaUsuario() {
                                             type="text"
                                             id="nome"
                                             name="nome"
-                                            value={usuario.nome}
+                                            value={usuarioCadastro.nome}
                                             onChange={handleInputChange}
                                             required={true}
                                             className="mt-1 block text-black w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -200,7 +189,7 @@ export default function GerenciaUsuario() {
                                             type="text"
                                             id="email"
                                             name="email"
-                                            value={usuario.email}
+                                            value={usuarioCadastro.email}
                                             onChange={handleInputChange}
                                             required={true}
                                             className="mt-1 block text-black w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -213,7 +202,7 @@ export default function GerenciaUsuario() {
                                         <input
                                             id="cpf"
                                             name="cpf"
-                                            value={usuario.cpf}
+                                            value={usuarioCadastro.cpf}
                                             onChange={handleInputChange}
                                             required={true}
                                             className="mt-1 block w-full text-black px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -228,7 +217,7 @@ export default function GerenciaUsuario() {
                                                 className="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-75"
                                                 onClick={(e) => {
                                                     e.preventDefault();
-                                                    resetarSenhaUsuario(usuario.email)
+                                                    resetarSenhaUsuario(usuarioCadastro.email)
                                                 }}>
                                                 Resetar a senha desse usuário
                                             </button>
@@ -241,7 +230,7 @@ export default function GerenciaUsuario() {
                                             <input
                                                 id="senha"
                                                 name="senha"
-                                                value={usuario.senha}
+                                                value={usuarioCadastro.senha}
                                                 onChange={handleInputChange}
                                                 required={true}
                                                 className="mt-1 block w-full text-black px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -254,7 +243,7 @@ export default function GerenciaUsuario() {
                                         <select
                                             id="role"
                                             name="role"
-                                            value={usuario.role[0].nome}
+                                            value={usuarioCadastro.role}
                                             onChange={handleRoleChange}
                                             required={true}
                                             className="mt-1 block w-full text-black bg-white px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
