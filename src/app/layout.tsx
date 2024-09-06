@@ -23,9 +23,9 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="pt-br">
+        <html lang="pt-br" className="h-full">
         <body
-            className={`${inter.className} bg-fixed bg-center bg-cover`}
+            className={`${inter.className} bg-fixed bg-center bg-cover h-full`}
             style={{ backgroundColor: "#FFEAC5", position: "relative", zIndex: -1 }}
         >
         <AuthProvider>
