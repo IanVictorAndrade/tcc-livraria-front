@@ -4,28 +4,22 @@ import api from "@/services/api";
 import {toast} from "sonner";
 import {useAuth} from "@/contexts/AuthContext";
 import Navbar from "@/components/Navbar";
-import {UsuarioProps, UsuarioPropsCadastro} from "../../../@types/utils/UsuarioProps";
+import {UsuarioProps, UsuarioPropsCadastro} from "@/@types/utils/UsuarioProps";
 
 
 export default function GerenciaUsuario() {
     const { token } = useAuth();
     const [usuarios, setUsuarios] = useState<Array<UsuarioProps>>([]);
-    const [usuario, setUsuario] = useState<Omit<UsuarioProps, 'id'>>({
-        nome: '',
-        email: '',
-        senha: '',
-        cpf: '',
-        role: [{ id: 1, nome: "Administrador" }],
-    });
     const [usuarioCadastro, setUsuarioCadastro] = useState<Omit<UsuarioPropsCadastro, 'id'>>({
         nome: '',
         email: '',
         senha: '',
         cpf: '',
-        role: '',
+        role: 'ROLE_ADMIN',
     });
     const [isEditMode, setIsEditMode] = useState<boolean>(false);
     const [editingUserId, setEditingUserId] = useState<number | null>(null);
+    const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
     useEffect(() => {
         listaUsuarios();
@@ -65,6 +59,12 @@ export default function GerenciaUsuario() {
             ...usuarioCadastro,
             [name]: value,
         });
+
+        if (name === 'cpf') {
+            if (isCpfValid(value)) {
+                setIsFormValid(true);
+            }
+        }
     };
 
     const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -103,8 +103,19 @@ export default function GerenciaUsuario() {
         }
     };
 
+    const isCpfValid = (cpf: string) => {
+        const cpfNovo = cpf.replace(/\D/g, '');
+        return cpfNovo.length === 11;
+    }
+
+
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!isFormValid) {
+            toast.error('CPF inválido');
+            return;
+        }
         try {
             if (isEditMode && editingUserId) {
                 // Editar o Usuário

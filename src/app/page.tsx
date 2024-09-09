@@ -39,12 +39,20 @@ export default function LoginPage() {
                             required
                         />
                     </div>
-                    <button
-                        type="submit"
-                        className="w-full py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out"
-                    >
-                        Entrar
-                    </button>
+                    <div className="flex gap-3">
+                        <button
+                            type="submit"
+                            className="max-w-md py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out"
+                        >
+                            Entrar
+                        </button>
+                        <a
+                            href="/enviaToken"
+                            className="max-w-md py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out"
+                        >
+                            Esqueci minha senha
+                        </a>
+                    </div>
                 </form>
             </div>
         </div>
