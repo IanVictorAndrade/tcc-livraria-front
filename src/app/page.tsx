@@ -18,40 +18,41 @@ export default function LoginPage() {
                 <h1 className="text-2xl text-black text-center mb-6">Login</h1>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Email:</label>
+                        <label className="block text-sm font-medium text-gray-700">E-mail:</label>
                         <input
-                            type="email"
+                            type="email"  // Corrigido para "email" em vez de "password"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 text-black rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            placeholder="Digite seu email"
+                            className="mt-1 block w-full px-0 py-2 border-b border-gray-300 text-black placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-black sm:text-sm"
+                            placeholder="Digite aqui seu e-mail"
                             required
                         />
                     </div>
-                    <div>
+                    <div className="flex flex-col items-start">
                         <label className="block text-sm font-medium text-gray-700">Senha:</label>
                         <input
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="mt-1 block w-full px-3 py-2 border text-black border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            placeholder="Digite sua senha"
+                            className="mt-1 block w-full px-0 py-2 border-b border-gray-300 text-black placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-black sm:text-sm"
+                            placeholder="Digite aqui sua senha"
                             required
                         />
+                        <a
+                            href="/enviaToken"
+                            className="text-indigo-600 hover:underline text-sm flex items-center justify-center mt-1" // Estilo discreto
+                        >
+                            Esqueci minha senha
+                        </a>
                     </div>
-                    <div className="flex gap-3">
+                    <div className="flex items-start">
+
                         <button
                             type="submit"
                             className="max-w-md py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out"
                         >
                             Entrar
                         </button>
-                        <a
-                            href="/enviaToken"
-                            className="max-w-md py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out"
-                        >
-                            Esqueci minha senha
-                        </a>
                     </div>
                 </form>
             </div>

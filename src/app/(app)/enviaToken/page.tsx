@@ -1,12 +1,21 @@
 "use client";
-import React, { useState } from "react";
+import React, {useState} from "react";
+import api from "@/services/api";
+import {toast} from "sonner";
+import voltarParaPaginaComDelay from "@/@types/utils/voltarPaginaDelay";
 
 export default function EnviaToken() {
     const [email, setEmail] = useState('');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log(email);
+        try {
+            await api.post('usuario/codigo-senha', { email });
+            toast.success('Link enviado no e-mail digitado com sucesso');
+            voltarParaPaginaComDelay('/');
+        } catch {
+            toast.error('E-mail não encontrado no sistema');
+        }
     }
 
     return (
@@ -15,7 +24,8 @@ export default function EnviaToken() {
                 <div className="mb-6">
                     <h1 className="text-2xl text-black text-left">Recuperação de senha</h1>
                     <p className="text-sm text-[#8B8C8D]">
-                        Se seu e-mail estiver cadastrado no sistema, será enviado um código de confirmação para trocar sua senha.
+                        Se seu e-mail estiver cadastrado no sistema, será enviado um código de confirmação para trocar
+                        sua senha.
                     </p>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-6">
