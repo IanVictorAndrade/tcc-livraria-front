@@ -49,10 +49,22 @@ export default function GerenciaLivro() {
     };
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            setImagem(e.target.files[0]);
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            const img = new Image();
+            img.src = URL.createObjectURL(file);
+
+            img.onload = () => {
+                if (img.width < 600 || img.height < 450) {
+                    toast.error("A imagem deve ter no mínimo 600x450 pixels");
+                    setImagem(null); // Reseta o estado da imagem
+                } else {
+                    setImagem(file); // Define o arquivo de imagem se for válido
+                }
+            };
         }
     };
+
 
     const handlePDFChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -277,6 +289,7 @@ export default function GerenciaLivro() {
                                             id="imagem"
                                             accept="image/*"
                                             onChange={handleImageChange}
+                                            required={true}
                                             className="mt-1 block text-black w-full px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                         />
                                     </div>
