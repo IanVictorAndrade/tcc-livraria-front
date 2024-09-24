@@ -51,17 +51,7 @@ export default function GerenciaLivro() {
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
-            const img = new Image();
-            img.src = URL.createObjectURL(file);
-
-            img.onload = () => {
-                if (img.width < 600 || img.height < 450) {
-                    toast.error("A imagem deve ter no mínimo 600x450 pixels");
-                    setImagem(null); // Reseta o estado da imagem
-                } else {
-                    setImagem(file); // Define o arquivo de imagem se for válido
-                }
-            };
+            setImagem(file)
         }
     };
 
@@ -102,70 +92,93 @@ export default function GerenciaLivro() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        try {
-            if (isEditMode && editingLivroId) {
-                // Editar o livro
-                await api.put(`/livro/editar/${editingLivroId}`, livro, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                toast.success('Livro atualizado com sucesso!');
-            } else {
-                // Cadastrar um novo livro
-                const response = await api.post('/livro/cadastrar', livro, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                const livroId = response.data.id;
 
-                // Fazer upload da imagem
-                if (imagem && livroId) {
-                    const formDataImagem = new FormData();
-                    formDataImagem.append('imagem', imagem);
-                    await api.post(`/livro/enviarImagem/${livroId}`, formDataImagem, {
-                        headers: {
-                            'Content-Type': 'multipart/form-data',
-                            Authorization: `Bearer ${token}`,
-                        },
-                    });
+        if (!imagem) {
+            toast.error('Por favor, envie uma imagem.');
+            return;
+        }
+
+        const img = new Image();
+        img.src = URL.createObjectURL(imagem);
+
+        img.onload = async () => {
+            if (img.width < 600 || img.height < 450) {
+                toast.error('A imagem deve ter no mínimo 600x450 pixels.');
+                // Limpa o input de imagem
+                setImagem(null);
+                const fileInput = document.getElementById("imagem") as HTMLInputElement;
+                if (fileInput) {
+                    fileInput.value = ""; // Limpa o campo de input de arquivo
                 }
-
-                // Fazer upload do arquivo PDF
-                if (arquivoPDF && livroId) {
-                    const formDataPDF = new FormData();
-                    formDataPDF.append('file', arquivoPDF);
-                    await api.post(`/google-drive/upload/${livroId}`, formDataPDF, {
-                        headers: {
-                            'Content-Type': 'multipart/form-data',
-                            Authorization: `Bearer ${token}`,
-                        },
-                    });
-                }
-
-                toast.success('Livro cadastrado com sucesso!');
+                return;
             }
 
-            // Resetar formulário e estado de edição
-            setLivro({
-                titulo: '',
-                autor: '',
-                descricao: '',
-                ano: new Date().getFullYear(),
-                preco: 0,
-                imagemUrl: null,
-            });
-            setImagem(null);
-            setArquivoPDF(null);
-            setIsEditMode(false);
-            setEditingLivroId(null);
-            listaLivros();
-        } catch (error) {
-            toast.error('Erro ao cadastrar ou editar livro:');
-            console.log('Erro ao cadastrar ou editar livro', error);
-        }
+            try {
+                if (isEditMode && editingLivroId) {
+                    // Editar o livro
+                    await api.put(`/livro/editar/${editingLivroId}`, livro, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+                    toast.success('Livro atualizado com sucesso!');
+                } else {
+                    // Cadastrar um novo livro
+                    const response = await api.post('/livro/cadastrar', livro, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+                    const livroId = response.data.id;
+
+                    // Fazer upload da imagem
+                    if (imagem && livroId) {
+                        const formDataImagem = new FormData();
+                        formDataImagem.append('imagem', imagem);
+                        await api.post(`/livro/enviarImagem/${livroId}`, formDataImagem, {
+                            headers: {
+                                'Content-Type': 'multipart/form-data',
+                                Authorization: `Bearer ${token}`,
+                            },
+                        });
+                    }
+
+                    // Fazer upload do arquivo PDF
+                    if (arquivoPDF && livroId) {
+                        const formDataPDF = new FormData();
+                        formDataPDF.append('file', arquivoPDF);
+                        await api.post(`/google-drive/upload/${livroId}`, formDataPDF, {
+                            headers: {
+                                'Content-Type': 'multipart/form-data',
+                                Authorization: `Bearer ${token}`,
+                            },
+                        });
+                    }
+
+                    toast.success('Livro cadastrado com sucesso!');
+                }
+
+                // Resetar formulário e estado de edição
+                setLivro({
+                    titulo: '',
+                    autor: '',
+                    descricao: '',
+                    ano: new Date().getFullYear(),
+                    preco: 0,
+                    imagemUrl: null,
+                });
+                setImagem(null);
+                setArquivoPDF(null);
+                setIsEditMode(false);
+                setEditingLivroId(null);
+                listaLivros();
+            } catch (error) {
+                toast.error('Erro ao cadastrar ou editar livro:');
+                console.log('Erro ao cadastrar ou editar livro', error);
+            }
+        };
     };
+
 
     const handleCancelEdit = () => {
         setLivro({
