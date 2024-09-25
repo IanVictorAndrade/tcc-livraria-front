@@ -104,11 +104,10 @@ export default function GerenciaLivro() {
         img.onload = async () => {
             if (img.width < 600 || img.height < 450) {
                 toast.error('A imagem deve ter no mínimo 600x450 pixels.');
-                // Limpa o input de imagem
                 setImagem(null);
                 const fileInput = document.getElementById("imagem") as HTMLInputElement;
                 if (fileInput) {
-                    fileInput.value = ""; // Limpa o campo de input de arquivo
+                    fileInput.value = "";
                 }
                 return;
             }
@@ -171,7 +170,7 @@ export default function GerenciaLivro() {
                 setArquivoPDF(null);
                 setIsEditMode(false);
                 setEditingLivroId(null);
-                listaLivros();
+                await listaLivros();
             } catch (error) {
                 toast.error('Erro ao cadastrar ou editar livro:');
                 console.log('Erro ao cadastrar ou editar livro', error);

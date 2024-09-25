@@ -6,6 +6,9 @@ import Image from "next/image";
 import {toast} from "sonner";
 import Navbar from "@/components/Navbar";
 import {LivroProps} from "@/@types/utils/LivroProps";
+import { IoIosArrowForward } from "react-icons/io";
+import { IoIosArrowBack } from "react-icons/io";
+
 
 export default function Home() {
     const [livros, setLivros] = useState<Array<LivroProps>>([]);
@@ -113,19 +116,17 @@ export default function Home() {
                     {livroIndex > 0 && (
                         <button
                             onClick={livroAnterior}
-                            className="absolute left-0 text-white text-4xl p-3 hover:text-gray-300 transition-opacity opacity-70 hover:opacity-100"
-                            style={{ backgroundColor: 'transparent' }}
+                            className="absolute bg-transparent left-0 text-white text-4xl p-3 hover:text-gray-300 transition-opacity opacity-70 hover:opacity-100"
                         >
-                            ⬅
+                            <IoIosArrowBack />
                         </button>
                     )}
                     {livroIndex < livros.length - 1 && (
                         <button
                             onClick={proximoLivro}
-                            className="absolute right-0 text-white text-4xl p-3 hover:text-gray-300 transition-opacity opacity-70 hover:opacity-100"
-                            style={{ backgroundColor: 'transparent' }}
+                            className="absolute bg-transparent right-0 text-white text-4xl p-3 hover:text-gray-300 transition-opacity opacity-70 hover:opacity-100"
                         >
-                            ➡
+                            <IoIosArrowForward />
                         </button>
                     )}
                 </div>

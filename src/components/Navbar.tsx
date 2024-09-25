@@ -1,6 +1,14 @@
+"use client";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useState } from "react";
 
 export default function Navbar() {
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+    const toggleDropdown = () => {
+        setIsDropdownOpen(!isDropdownOpen);
+    };
+
     return (
         <nav className="bg-fixed bg-center bg-cover" style={{ backgroundImage: "url('/background-roxo')"}}>
             <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
@@ -26,16 +34,38 @@ export default function Navbar() {
                             </div>
                         </div>
                     </div>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:pr-0">
-                        <button
-                            type="button"
-                            className="p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
-                        >
-                            <AccountCircleIcon />
-                        </button>
+
+                    {/* Botão de Perfil */}
+                    <div className="absolute inset-y-0 right-0 flex items-center sm:static sm:inset-auto sm:pr-0">
+                        <div className="relative">
+                            <button
+                                type="button"
+                                className={`p-1 rounded-full outline-none focus:outline-none ${
+                                    isDropdownOpen ? "text-blue-500" : "text-white"
+                                } hover:text-blue-500`}
+                                onClick={toggleDropdown}
+                            >
+                                <AccountCircleIcon />
+                            </button>
+
+                            {/* Dropdown */}
+                            {isDropdownOpen && (
+                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                                    <a href="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        Profile
+                                    </a>
+                                    <a href="/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        Settings
+                                    </a>
+                                    <a href="/logout" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        Log Out
+                                    </a>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
         </nav>
-    )
+    );
 }
