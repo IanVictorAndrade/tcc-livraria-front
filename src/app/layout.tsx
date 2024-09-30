@@ -25,8 +25,7 @@ export default function RootLayout({
     return (
         <html lang="pt-br" className="h-full">
         <body
-            className={`${inter.className} bg-fixed bg-center bg-cover h-full`}
-            style={{ backgroundColor: "#FFEAC5", position: "relative", zIndex: -1 }}
+            className={`${inter.className} bg-fixed bg-center bg-cover h-full bg-gray-100`}
         >
         <AuthProvider>
             {children}

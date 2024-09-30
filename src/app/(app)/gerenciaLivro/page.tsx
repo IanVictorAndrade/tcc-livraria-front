@@ -324,7 +324,7 @@ export default function GerenciaLivro() {
                                         <button
                                             type="button"
                                             onClick={handleCancelEdit}
-                                            className="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75"
+                                            className="bg-[#E40808] hover:bg-red-500 text-white font-semibold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75"
                                         >
                                             Cancelar Edição
                                         </button>
@@ -332,7 +332,7 @@ export default function GerenciaLivro() {
                                     <button
                                         type="submit"
                                         className={`${
-                                            isEditMode ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-amber-500 hover:bg-amber-600'
+                                            isEditMode ? 'bg-[#792b15] hover:bg-orange-700' : 'bg-[#792b15] hover:bg-orange-700'
                                         } text-white font-semibold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-75`}
                                     >
                                         {isEditMode ? 'Editar Livro' : 'Cadastrar Livro'}
@@ -360,13 +360,13 @@ export default function GerenciaLivro() {
                                         <div className="flex space-x-2">
                                             <button
                                                 onClick={() => handleEdit(livro)}
-                                                className="text-yellow-500 hover:text-yellow-700 font-semibold focus:outline-none focus:underline"
+                                                className="text-orange-900 hover:text-yellow-700 font-semibold focus:outline-none focus:underline"
                                             >
                                                 Editar
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(livro.id)}
-                                                className="text-red-500 hover:text-red-700 font-semibold focus:outline-none focus:underline"
+                                                className="text-[#E40808] hover:text-red-700 font-semibold focus:outline-none focus:underline"
                                             >
                                                 Excluir
                                             </button>

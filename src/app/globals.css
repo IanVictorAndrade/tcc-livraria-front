@@ -16,11 +16,6 @@
     }
 }
 
-body {
-    color: rgb(var(--foreground-rgb));
-    background: -webkit-linear-gradient(315deg, hsla(21, 43%, 57%, 1) 0%, hsla(38, 56%, 74%, 1) 100%);
-}
-
 .botao {
     @apply bg-blue-700 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 max-w-40;
 }

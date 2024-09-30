@@ -86,47 +86,49 @@ export default function Home() {
         <div>
             <Navbar />
             <div className="flex justify-center items-center mt-12">
-                {/* Informações do livro */}
-                <div className={`w-1/3 p-8 transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-                    <h2 className="text-4xl text-white font-bold mb-6">{livro.titulo}</h2>
-                    <p className="text-2xl text-white font-bold mb-4">Autor: {livro.autor}</p>
-                    <p className="text-2xl text-white font-bold mb-4">Ano: {livro.ano}</p>
-                    <p className="text-xl text-white mb-6">{livro.descricao}</p>
-                    <p className="text-3xl text-white font-bold mb-6">Preço: R$ {livro.preco.toFixed(2)}</p>
-                    <button onClick={() => comprarLivro(livro)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded text-xl">
-                        Comprar
-                    </button>
-                </div>
-
                 {/* Imagem do livro e navegação */}
                 <div className={`w-2/3 flex justify-center items-center relative transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-                    {livro.imagemUrl && (
-                        <Image
-                            src={`${process.env.NEXT_PUBLIC_URL_BACK}/${livro.imagemUrl}`}
-                            alt={livro.titulo}
-                            width={450}
-                            height={600}
-                            className="rounded-lg shadow-lg object-cover"
-                            unoptimized={true}
-                            priority={true}
-                        />
-                    )}
+                    <div className={"flex justify-around"}>
+                        <div
+                            className={`w-2/3 p-8 transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+                            <h2 className="text-4xl text-gray-700 font-bold mb-6">{livro.titulo}</h2>
+                            <p className="text-2xl text-gray-700 font-bold mb-4">Autor: {livro.autor}</p>
+                            <p className="text-2xl text-gray-700 font-bold mb-4">Ano: {livro.ano}</p>
+                            <p className="text-xl text-gray-700 mb-6">{livro.descricao}</p>
+                            <p className="text-3xl text-gray-700 font-bold mb-6">Preço: R$ {livro.preco.toFixed(2)}</p>
+                            <button onClick={() => comprarLivro(livro)}
+                                    className="bg-orange-900 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded text-xl">
+                                Comprar
+                            </button>
+                        </div>
+                        {livro.imagemUrl && (
+                            <Image
+                                src={`${process.env.NEXT_PUBLIC_URL_BACK}/${livro.imagemUrl}`}
+                                alt={livro.titulo}
+                                width={450}
+                                height={600}
+                                className="rounded-lg shadow-lg object-cover"
+                                unoptimized={true}
+                                priority={true}
+                            />
+                        )}
+                    </div>
 
                     {/* Navegação para próximo e anterior */}
                     {livroIndex > 0 && (
                         <button
                             onClick={livroAnterior}
-                            className="absolute bg-transparent left-0 text-white text-4xl p-3 hover:text-gray-300 transition-opacity opacity-70 hover:opacity-100"
+                            className="absolute bg-transparent left-0 text-black text-4xl p-3 hover:text-gray-300 transition-opacity opacity-70 hover:opacity-100"
                         >
-                            <IoIosArrowBack />
+                            <IoIosArrowBack/>
                         </button>
                     )}
                     {livroIndex < livros.length - 1 && (
                         <button
                             onClick={proximoLivro}
-                            className="absolute bg-transparent right-0 text-white text-4xl p-3 hover:text-gray-300 transition-opacity opacity-70 hover:opacity-100"
+                            className="absolute bg-transparent right-0 text-black text-4xl p-3 hover:text-gray-300 transition-opacity opacity-70 hover:opacity-100"
                         >
-                            <IoIosArrowForward />
+                            <IoIosArrowForward/>
                         </button>
                     )}
                 </div>
