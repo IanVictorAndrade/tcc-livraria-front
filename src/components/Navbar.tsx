@@ -43,7 +43,7 @@ export default function Navbar() {
                                 className={`p-1 rounded-full outline-none focus:outline-none text-orange-950 hover:text-orange-700`}
                                 onClick={toggleDropdown}
                             >
-                                <AccountCircleIcon />
+                                <AccountCircleIcon style={{ fontSize: 37 }} /> {/* Tamanho aumentado */}
                             </button>
 
                             {/* Dropdown */}
