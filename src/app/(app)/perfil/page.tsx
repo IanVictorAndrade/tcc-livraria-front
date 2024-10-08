@@ -23,7 +23,7 @@ export default function Perfil() {
                             <input
                                 type="text"
                                 id="Username"
-                                className="min-w-[30rem] px-2 py-1 rounded-sm pr-10"
+                                className="outline-none min-w-[30rem] px-2 py-1 rounded-sm pr-10"
                                 value={nome}
                                 readOnly={!isEditingNome}
                                 onChange={(e) => setNome(e.target.value)}
@@ -40,7 +40,7 @@ export default function Perfil() {
                             <input
                                 type="text"
                                 id="cpf"
-                                className="min-w-[30rem] px-2 py-1 rounded-sm pr-10"
+                                className="outline-none min-w-[30rem] px-2 py-1 rounded-sm pr-10"
                                 value={cpf}
                                 readOnly={!isEditingCpf}
                                 onChange={(e) => setCpf(e.target.value)}
@@ -59,7 +59,7 @@ export default function Perfil() {
                             <input
                                 type="text"
                                 id="email"
-                                className="min-w-[30rem] px-2 py-1 rounded-sm pr-10"
+                                className="outline-none min-w-[30rem] px-2 py-1 rounded-sm pr-10"
                                 value={email}
                                 readOnly={!isEditingEmail}
                                 onChange={(e) => setEmail(e.target.value)}
