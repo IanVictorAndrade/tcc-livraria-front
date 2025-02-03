@@ -25,9 +25,9 @@ export default function Navbar() {
                                 <a href="/gerenciaUsuario" className="text-[#792b15] hover:bg-orange-900 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                                     Gerenciar Usuário
                                 </a>
-                                <a href="#" className="text-[#792b15] hover:bg-orange-900 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                                    Biografia
-                                </a>
+                                {/*<a href="#" className="text-[#792b15] hover:bg-orange-900 hover:text-white px-3 py-2 rounded-md text-sm font-medium">*/}
+                                {/*    Biografia*/}
+                                {/*</a>*/}
                                 <a href="/equipe" className="text-[#792b15] hover:bg-orange-900 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                                     Equipe
                                 </a>
