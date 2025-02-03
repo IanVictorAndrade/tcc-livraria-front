@@ -102,15 +102,15 @@ export default function GerenciaLivro() {
         img.src = URL.createObjectURL(imagem);
 
         img.onload = async () => {
-            if (img.width < 600 || img.height < 450) {
-                toast.error('A imagem deve ter no mínimo 600x450 pixels.');
-                setImagem(null);
-                const fileInput = document.getElementById("imagem") as HTMLInputElement;
-                if (fileInput) {
-                    fileInput.value = "";
-                }
-                return;
-            }
+            // if (img.width < 600 || img.height < 450) {
+            //     toast.error('A imagem deve ter no mínimo 600x450 pixels.');
+            //     setImagem(null);
+            //     const fileInput = document.getElementById("imagem") as HTMLInputElement;
+            //     if (fileInput) {
+            //         fileInput.value = "";
+            //     }
+            //     return;
+            // }
 
             try {
                 if (isEditMode && editingLivroId) {
