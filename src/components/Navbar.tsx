@@ -1,8 +1,10 @@
 "use client";
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Navbar() {
+    const { role, isAuthenticated } = useAuth();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const toggleDropdown = () => {
@@ -19,15 +21,19 @@ export default function Navbar() {
                                 <a href="/home" className="text-[#792b15] hover:bg-orange-900 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                                     Home
                                 </a>
-                                <a href="/gerenciaLivro" className="text-[#792b15] hover:bg-orange-900 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                                    Gerenciar Livro
-                                </a>
-                                <a href="/gerenciaUsuario" className="text-[#792b15] hover:bg-orange-900 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                                    Gerenciar Usuário
-                                </a>
-                                {/*<a href="#" className="text-[#792b15] hover:bg-orange-900 hover:text-white px-3 py-2 rounded-md text-sm font-medium">*/}
-                                {/*    Biografia*/}
-                                {/*</a>*/}
+
+                                {/* Esconde os links se o usuário for ROLE_USER */}
+                                {role !== "ROLE_USER" && (
+                                    <>
+                                        <a href="/gerenciaLivro" className="text-[#792b15] hover:bg-orange-900 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                                            Gerenciar Livro
+                                        </a>
+                                        <a href="/gerenciaUsuario" className="text-[#792b15] hover:bg-orange-900 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                                            Gerenciar Usuário
+                                        </a>
+                                    </>
+                                )}
+
                                 <a href="/equipe" className="text-[#792b15] hover:bg-orange-900 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                                     Equipe
                                 </a>
@@ -40,10 +46,10 @@ export default function Navbar() {
                         <div className="relative">
                             <button
                                 type="button"
-                                className={`p-1 rounded-full outline-none focus:outline-none text-orange-950 hover:text-orange-700`}
+                                className="p-1 rounded-full outline-none focus:outline-none text-orange-950 hover:text-orange-700"
                                 onClick={toggleDropdown}
                             >
-                                <AccountCircleIcon style={{ fontSize: 37 }} /> {/* Tamanho aumentado */}
+                                <AccountCircleIcon style={{ fontSize: 37 }} />
                             </button>
 
                             {/* Dropdown */}

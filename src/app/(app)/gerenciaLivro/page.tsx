@@ -1,14 +1,15 @@
 "use client";
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import api from "@/services/api";
-import {LivroProps} from "@/@types/utils/LivroProps";
-import {toast} from "sonner";
-import {useAuth} from "@/contexts/AuthContext";
+import { LivroProps } from "@/@types/utils/LivroProps";
+import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 import Navbar from "@/components/Navbar";
-
+import { useProtectPage } from "@/hooks/useProtectPage";
 
 export default function GerenciaLivro() {
-    const {token} = useAuth();
+    useProtectPage();
+    const { token } = useAuth();
     const [livro, setLivro] = useState<Omit<LivroProps, 'id'>>({
         titulo: '',
         autor: '',
@@ -30,7 +31,7 @@ export default function GerenciaLivro() {
     const listaLivros = async () => {
         try {
             const response = await api.get('/livro/listar', {
-                headers: {Authorization: `${token}`}
+                headers: { Authorization: `${token}` }
             });
             const sortedLivros = response.data.sort((a: LivroProps, b: LivroProps) => a.titulo.localeCompare(b.titulo));
             setLivros(sortedLivros);
@@ -41,7 +42,7 @@ export default function GerenciaLivro() {
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setLivro({
             ...livro,
             [name]: value,
@@ -50,11 +51,9 @@ export default function GerenciaLivro() {
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            setImagem(file)
+            setImagem(e.target.files[0]);
         }
     };
-
 
     const handlePDFChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -78,108 +77,77 @@ export default function GerenciaLivro() {
     const handleDelete = async (livroId: number) => {
         try {
             await api.delete(`/livro/deletar/${livroId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: { Authorization: `Bearer ${token}` },
             });
             setLivros(livros.filter(livro => livro.id !== livroId));
             toast.success('Livro excluído com sucesso!');
         } catch (error) {
-            toast.error('Erro ao excluir livro:');
-            console.log('Erro ao excluir livro', error);
+            toast.error('Erro ao excluir livro');
         }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        isEditMode ? await handleEditLivro() : await handleCreateLivro();
+    };
 
+    const handleCreateLivro = async () => {
         if (!imagem) {
             toast.error('Por favor, envie uma imagem.');
             return;
         }
-
-        const img = new Image();
-        img.src = URL.createObjectURL(imagem);
-
-        img.onload = async () => {
-            // if (img.width < 600 || img.height < 450) {
-            //     toast.error('A imagem deve ter no mínimo 600x450 pixels.');
-            //     setImagem(null);
-            //     const fileInput = document.getElementById("imagem") as HTMLInputElement;
-            //     if (fileInput) {
-            //         fileInput.value = "";
-            //     }
-            //     return;
-            // }
-
-            try {
-                if (isEditMode && editingLivroId) {
-                    // Editar o livro
-                    await api.put(`/livro/editar/${editingLivroId}`, livro, {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    });
-                    toast.success('Livro atualizado com sucesso!');
-                } else {
-                    // Cadastrar um novo livro
-                    const response = await api.post('/livro/cadastrar', livro, {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    });
-                    const livroId = response.data.id;
-
-                    // Fazer upload da imagem
-                    if (imagem && livroId) {
-                        const formDataImagem = new FormData();
-                        formDataImagem.append('imagem', imagem);
-                        await api.post(`/livro/enviarImagem/${livroId}`, formDataImagem, {
-                            headers: {
-                                'Content-Type': 'multipart/form-data',
-                                Authorization: `Bearer ${token}`,
-                            },
-                        });
-                    }
-
-                    // Fazer upload do arquivo PDF
-                    if (arquivoPDF && livroId) {
-                        const formDataPDF = new FormData();
-                        formDataPDF.append('file', arquivoPDF);
-                        await api.post(`/google-drive/upload/${livroId}`, formDataPDF, {
-                            headers: {
-                                'Content-Type': 'multipart/form-data',
-                                Authorization: `Bearer ${token}`,
-                            },
-                        });
-                    }
-
-                    toast.success('Livro cadastrado com sucesso!');
-                }
-
-                // Resetar formulário e estado de edição
-                setLivro({
-                    titulo: '',
-                    autor: '',
-                    descricao: '',
-                    ano: new Date().getFullYear(),
-                    preco: 0,
-                    imagemUrl: null,
-                });
-                setImagem(null);
-                setArquivoPDF(null);
-                setIsEditMode(false);
-                setEditingLivroId(null);
-                await listaLivros();
-            } catch (error) {
-                toast.error('Erro ao cadastrar ou editar livro:');
-                console.log('Erro ao cadastrar ou editar livro', error);
-            }
-        };
+        try {
+            const response = await api.post('/livro/cadastrar', livro, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const livroId = response.data.id;
+            await uploadArquivos(livroId);
+            toast.success('Livro cadastrado com sucesso!');
+            resetFormulario();
+        } catch (error) {
+            toast.error('Erro ao cadastrar livro.');
+        }
     };
 
+    const handleEditLivro = async () => {
+        if (!editingLivroId) {
+            toast.error('ID do livro inválido.');
+            return;
+        }
+        try {
+            await api.put(`/livro/editar/${editingLivroId}`, livro, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            await uploadArquivos(editingLivroId);
+            toast.success('Livro atualizado com sucesso!');
+            resetFormulario();
+        } catch (error) {
+            toast.error('Erro ao editar livro.');
+        }
+    };
 
-    const handleCancelEdit = () => {
+    const uploadArquivos = async (livroId: number) => {
+        try {
+            if (imagem) {
+                const formDataImagem = new FormData();
+                formDataImagem.append('imagem', imagem);
+                await api.post(`/livro/enviarImagem/${livroId}`, formDataImagem, {
+                    headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${token}` },
+                });
+            }
+            if (arquivoPDF) {
+                const formDataPDF = new FormData();
+                formDataPDF.append('file', arquivoPDF);
+                await api.post(`/google-drive/upload/${livroId}`, formDataPDF, {
+                    headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${token}` },
+                });
+            }
+        } catch (error) {
+            toast.error('Erro ao enviar arquivos.');
+        }
+    };
+
+    const resetFormulario = () => {
         setLivro({
             titulo: '',
             autor: '',
@@ -194,10 +162,13 @@ export default function GerenciaLivro() {
         setEditingLivroId(null);
     };
 
+    const handleCancelEdit = () => {
+        resetFormulario();
+    };
 
     return (
         <>
-            <Navbar />
+            <Navbar/>
             <div className="flex justify-center items-center pt-12">
                 <div className="bg-white p-8 rounded-lg shadow-lg max-w-6xl w-full">
                     <h2 className="text-2xl font-semibold text-gray-800 mb-6">Gerenciar Livros</h2>
@@ -293,30 +264,31 @@ export default function GerenciaLivro() {
                                     </div>
                                     {!isEditMode && <>
                                         <div>
-                                        <label htmlFor="imagem" className="block text-sm font-medium text-gray-700">
-                                            Imagem
-                                        </label>
-                                        <input
-                                            type="file"
-                                            id="imagem"
-                                            accept="image/*"
-                                            onChange={handleImageChange}
-                                            required={true}
-                                            className="mt-1 block text-black w-full px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label htmlFor="arquivoPDF" className="block text-sm font-medium text-gray-700">
-                                        Arquivo PDF
-                                        </label>
-                                        <input
-                                        type="file"
-                                        id="arquivoPDF"
-                                        accept="application/pdf"
-                                        onChange={handlePDFChange}
-                                        className="mt-1 block w-full text-black px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                        />
-                                    </div>
+                                            <label htmlFor="imagem" className="block text-sm font-medium text-gray-700">
+                                                Imagem
+                                            </label>
+                                            <input
+                                                type="file"
+                                                id="imagem"
+                                                accept="image/*"
+                                                onChange={handleImageChange}
+                                                required={true}
+                                                className="mt-1 block text-black w-full px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label htmlFor="arquivoPDF"
+                                                   className="block text-sm font-medium text-gray-700">
+                                                Arquivo PDF
+                                            </label>
+                                            <input
+                                                type="file"
+                                                id="arquivoPDF"
+                                                accept="application/pdf"
+                                                onChange={handlePDFChange}
+                                                className="mt-1 block w-full text-black px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                            />
+                                        </div>
                                     </>}
                                 </div>
                                 <div className="flex justify-end space-x-4">

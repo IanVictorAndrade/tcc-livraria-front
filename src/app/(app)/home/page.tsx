@@ -70,7 +70,7 @@ export default function Home() {
     return (
         <div>
             <Navbar />
-            <div className="flex justify-center items-center px-10 py-10">
+            <div className="flex justify-center items-center px-6 py-6">
                 <div className="w-full max-w-[1400px] flex flex-nowrap items-center justify-between gap-10">
 
                     {/* Capa do livro centralizada */}

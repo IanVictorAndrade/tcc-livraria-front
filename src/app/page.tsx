@@ -20,7 +20,7 @@ export default function LoginPage() {
                     <div>
                         <label className="block text-sm font-medium text-gray-700">E-mail:</label>
                         <input
-                            type="email"  // Corrigido para "email" em vez de "password"
+                            type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className="mt-1 block w-full px-0 py-2 border-b border-gray-300 text-black placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-black sm:text-sm"
@@ -40,7 +40,7 @@ export default function LoginPage() {
                         />
                         <a
                             href="/enviaToken"
-                            className="text-indigo-600 hover:underline text-sm flex items-center justify-center mt-1" // Estilo discreto
+                            className="text-indigo-600 hover:underline text-sm flex items-center justify-center mt-1"
                         >
                             Esqueci minha senha
                         </a>

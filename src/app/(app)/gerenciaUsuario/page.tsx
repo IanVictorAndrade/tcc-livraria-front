@@ -5,9 +5,11 @@ import {toast} from "sonner";
 import {useAuth} from "@/contexts/AuthContext";
 import Navbar from "@/components/Navbar";
 import {UsuarioProps, UsuarioPropsCadastro} from "@/@types/utils/UsuarioProps";
+import {useProtectPage} from "@/hooks/useProtectPage";
 
 
 export default function GerenciaUsuario() {
+    useProtectPage();
     const { token } = useAuth();
     const [usuarios, setUsuarios] = useState<Array<UsuarioProps>>([]);
     const [usuarioCadastro, setUsuarioCadastro] = useState<Omit<UsuarioPropsCadastro, 'id'>>({
