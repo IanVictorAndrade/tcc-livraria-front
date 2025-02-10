@@ -28,7 +28,7 @@ export default function LoginPage() {
                             required
                         />
                     </div>
-                    <div className="flex flex-col items-start">
+                    <div>
                         <label className="block text-sm font-medium text-gray-700">Senha:</label>
                         <input
                             type="password"
@@ -38,18 +38,28 @@ export default function LoginPage() {
                             placeholder="Digite aqui sua senha"
                             required
                         />
+                    </div>
+
+                    {/* Linha para "Esqueci minha senha" e "Cadastre-se" */}
+                    <div className="flex justify-between text-sm">
                         <a
                             href="/enviaToken"
-                            className="text-indigo-600 hover:underline text-sm flex items-center justify-center mt-1"
+                            className="text-indigo-600 hover:underline"
                         >
                             Esqueci minha senha
                         </a>
+                        <a
+                            href="/cadastroUsuario"
+                            className="text-indigo-600 hover:underline"
+                        >
+                            Cadastre-se
+                        </a>
                     </div>
-                    <div className="flex items-start">
 
+                    <div className="flex items-start">
                         <button
                             type="submit"
-                            className="max-w-md py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out"
+                            className="w-full py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out"
                         >
                             Entrar
                         </button>

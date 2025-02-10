@@ -6,6 +6,7 @@ import {useAuth} from "@/contexts/AuthContext";
 import Navbar from "@/components/Navbar";
 import {UsuarioProps, UsuarioPropsCadastro} from "@/@types/utils/UsuarioProps";
 import {useProtectPage} from "@/hooks/useProtectPage";
+import {jwtDecode} from "jwt-decode";
 
 
 export default function GerenciaUsuario() {
@@ -24,7 +25,9 @@ export default function GerenciaUsuario() {
     const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
     useEffect(() => {
-        listaUsuarios();
+        if (token) {
+            listaUsuarios();
+        }
     }, [token]);
 
     const listaUsuarios = async () => {
@@ -32,8 +35,14 @@ export default function GerenciaUsuario() {
             const response = await api.get('/usuario/listar', {
                 headers: {Authorization: `${token}`}
             });
-            const sortedUsuarios = response.data.sort((a: UsuarioProps, b: UsuarioProps) => a.nome.localeCompare(b.nome));
-            setUsuarios(sortedUsuarios);
+            if (token) {
+                const decodedToken: any = jwtDecode(token);
+                const usuarioLogadoId = decodedToken.id;
+
+                const sortedUsuarios = response.data.sort((a: UsuarioProps, b: UsuarioProps) => a.nome.localeCompare(b.nome))
+                    .filter((usuario: UsuarioProps) => usuario.id !== usuarioLogadoId);
+                setUsuarios(sortedUsuarios);
+            }
         } catch {
             window.location.href = '/';
             toast.error('Necessário fazer o login para acessar a página');
@@ -62,7 +71,9 @@ export default function GerenciaUsuario() {
             [name]: value,
         });
 
+        console.log(name)
         if (name === 'cpf') {
+            console.log("estou aqui papai")
             if (isCpfValid(value)) {
                 setIsFormValid(true);
             }
@@ -83,9 +94,12 @@ export default function GerenciaUsuario() {
             nome: user.nome,
             cpf: user.cpf,
             email: user.email,
-            senha: user.senha,
+            senha: user.senha || '',
             role: user.role[0].nome,
         });
+
+        setIsFormValid(isCpfValid(user.cpf));
+
         setIsEditMode(true);
         setEditingUserId(user.id);
     };
@@ -107,6 +121,8 @@ export default function GerenciaUsuario() {
 
     const isCpfValid = (cpf: string) => {
         const cpfNovo = cpf.replace(/\D/g, '');
+        console.log(cpfNovo);
+        console.log(cpfNovo.length);
         return cpfNovo.length === 11;
     }
 
@@ -115,6 +131,7 @@ export default function GerenciaUsuario() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!isFormValid) {
+            console.log(isCpfValid(usuarioCadastro.cpf));
             toast.error('CPF inválido');
             return;
         }
