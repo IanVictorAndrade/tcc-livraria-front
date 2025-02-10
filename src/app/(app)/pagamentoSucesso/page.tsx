@@ -1,66 +1,102 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import api from "@/services/api";
-import { CheckCircle, FileDownload, Home } from "@mui/icons-material";
 import { Button, Container, Paper, Typography, Box } from "@mui/material";
+import { CheckCircle, Download, Home } from "@mui/icons-material";
 
 export default function PagamentoSucesso() {
     const searchParams = useSearchParams();
     const livroId = searchParams.get("livroId");
+    const paymentId = searchParams.get("payment_id");
+    const status = searchParams.get("status");
+
+    const [fileId, setFileId] = useState<string | null>(null);
+    const [erro, setErro] = useState<string | null>(null);
 
     useEffect(() => {
-        if (livroId) {
-            baixarLivro(livroId);
+        if (status === "approved" && livroId && paymentId) {
+            api.get(`/google-drive/obterFileId/${livroId}`)
+                .then((res) => {
+                    setFileId(res.data.fileId);
+                })
+                .catch(() => {
+                    setErro("Erro ao obter arquivo do livro.");
+                });
+        } else {
+            setErro("Pagamento não confirmado.");
         }
-    }, [livroId]);
+    }, [livroId, paymentId, status]);
 
-    const baixarLivro = async (livroId: string) => {
-        try {
-            const response = await api.get(`/mercado-pago/download?livroId=${livroId}`);
-            if (response.data.downloadUrl) {
-                window.location.href = response.data.downloadUrl;
+    async function baixarLivro() {
+        if (fileId) {
+            try {
+                const resp = await api.get(`/google-drive/download/${fileId}`, {
+                    responseType: "blob", // Indica que estamos recebendo um arquivo
+                });
+
+                // Criar um Blob com os dados do arquivo
+                const blob = new Blob([resp.data], { type: "application/pdf" });
+                const url = window.URL.createObjectURL(blob);
+
+                // Criar um link invisível para o download
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "livro.pdf"; // Nome do arquivo ao baixar
+                document.body.appendChild(a);
+                a.click();
+
+                // Limpar o URL temporário
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } catch {
+                setErro("Erro ao baixar o livro.");
             }
-        } catch (error) {
-            console.error("Erro ao baixar livro", error);
         }
-    };
+    }
 
     return (
         <Container maxWidth="sm" className="flex flex-col items-center justify-center min-h-screen">
             <Paper elevation={4} className="p-8 text-center rounded-lg">
-                {/* Ícone de sucesso animado */}
                 <Box className="flex justify-center">
-                    <CheckCircle sx={{ fontSize: 80, color: "green", animation: "bounce 1s infinite" }} />
+                    <CheckCircle sx={{ fontSize: 80, color: "green" }} />
                 </Box>
 
                 <Typography variant="h4" fontWeight="bold" color="textPrimary" className="mt-4">
-                    Pagamento Aprovado!
+                    Pagamento Realizado com Sucesso!
                 </Typography>
 
                 <Typography variant="body1" color="textSecondary" className="mt-2">
-                    Seu pagamento foi confirmado. Agora você pode baixar seu livro digital.
+                    Obrigado por sua compra! Clique no botão abaixo para baixar seu livro.
                 </Typography>
 
-                <div className={"flex justify-center items-center gap-2 mt-6"}>
-                    <Button
-                        variant="contained"
-                        color="success"
-                        startIcon={<FileDownload />}
-                        href={`/mercado-pago/download?livroId=${livroId}`}
-                    >
-                        Baixar Livro
-                    </Button>
+                {erro ? (
+                    <Typography variant="body1" color="error" className="mt-4">
+                        {erro}
+                    </Typography>
+                ) : (
+                    status === "approved" && (
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            startIcon={<Download />}
+                            onClick={baixarLivro}
+                            className="mt-6"
+                        >
+                            Baixar Livro
+                        </Button>
+                    )
+                )}
 
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        startIcon={<Home />}
-                        href="/home"
-                    >
-                        Voltar para Home
-                    </Button>
-                </div>
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    startIcon={<Home />}
+                    href="/home"
+                    className="mt-4"
+                >
+                    Voltar para Home
+                </Button>
             </Paper>
         </Container>
     );
